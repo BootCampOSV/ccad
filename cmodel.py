@@ -15,6 +15,7 @@ License
 Distributed under the GNU LESSER GENERAL PUBLIC LICENSE Version 3.
 View LICENSE for details.
 """
+
 from __future__ import print_function
 
 from os import path as _path
@@ -95,200 +96,202 @@ from OCC import TopTools as _TopTools
 
 
 # Shape Functions
-def class(object)
-
-def _translate(s1, pdir):
-    """ 
-    Parameters
-    -----------
-
-    s1 : ccad.model.solid
-    pdir : 
-
+class Shape(_TopoDS.TopoDS_Compound):
     """
-    m = _gp.gp_Trsf()
-    m.SetTranslation(_gp.gp_Vec(pdir[0], pdir[1], pdir[2]))
-    trf = _BRepBuilderAPI.BRepBuilderAPI_Transform(m)
-    trf.Perform(s1.shape, True)
-    return trf.Shape()
-
-
-def _rotate(s1, pabout, pdir, angle):
-    """ 
-    Parameters
-    ----------
-
-    s1 : ccad.model.solid 
-    pabout : point 
-    pdir :   direction 
-    angle : angle 
-
     """
-    m = _gp.gp_Trsf()
-    m.SetRotation(_gp.gp_Ax1(_gp.gp_Pnt(pabout[0], pabout[1], pabout[2]),
-                             _gp.gp_Dir(pdir[0], pdir[1], pdir[2])), angle)
-    trf = _BRepBuilderAPI.BRepBuilderAPI_Transform(m)
-    trf.Perform(s1.shape, True)
-    return trf.Shape()
+
+    def _translate(self, pdir):
+        """ 
+        Parameters
+        -----------
+
+        s1 : ccad.model.solid
+        pdir : 
+
+        """
+        m = _gp.gp_Trsf()
+        m.SetTranslation(_gp.gp_Vec(pdir[0], pdir[1], pdir[2]))
+        trf = _BRepBuilderAPI.BRepBuilderAPI_Transform(m)
+        trf.Perform(self.shape, True)
+        return trf.Shape()
 
 
-def _mirror(s1, pabout, pdir):
-    """
-    Parameters
-    ----------
+    def _rotate(self, pabout, pdir, angle):
+        """ 
+        Parameters
+        ----------
 
-    s1 : ccad.model.solid
-    pabout : point 
-    pdir : direction 
+        s1 : ccad.model.solid 
+        pabout : point 
+        pdir :   direction 
+        angle : angle 
 
-    """
-    m = _gp.gp_Trsf()
-    m.SetMirror(_gp.gp_Ax2(_gp.gp_Pnt(pabout[0], pabout[1], pabout[2]),
-                           _gp.gp_Dir(pdir[0], pdir[1], pdir[2])))
-    trf = _BRepBuilderAPI.BRepBuilderAPI_Transform(m)
-    trf.Perform(s1.shape, True)
-    return trf.Shape()
-
-
-def _scale(s1, sx=1.0, sy=1.0, sz=1.0):
-    m = _gp.gp_GTrsf()
-    m.SetVectorialPart(_gp.gp_Mat(sx, 0, 0, 0, sy, 0, 0, 0, sz))
-    trf = _BRepBuilderAPI.BRepBuilderAPI_GTransform(s1.shape, m, False)
-    return trf.Shape()
+        """
+        m = _gp.gp_Trsf()
+        m.SetRotation(_gp.gp_Ax1(_gp.gp_Pnt(pabout[0], pabout[1], pabout[2]),
+                                 _gp.gp_Dir(pdir[0], pdir[1], pdir[2])), angle)
+        trf = _BRepBuilderAPI.BRepBuilderAPI_Transform(m)
+        trf.Perform(self.shape, True)
+        return trf.Shape()
 
 
-def translated(s1, pdir):
-    """
-    Returns a new shape which is s1 translated (moved).
-    """
-    s2 = s1.copy()
-    s2.translate(pdir)
-    return s2
+    def _mirror(self, pabout, pdir):
+        """
+        Parameters
+        ----------
+
+        s1 : ccad.model.solid
+        pabout : point 
+        pdir : direction 
+
+        """
+        m = _gp.gp_Trsf()
+        m.SetMirror(_gp.gp_Ax2(_gp.gp_Pnt(pabout[0], pabout[1], pabout[2]),
+                               _gp.gp_Dir(pdir[0], pdir[1], pdir[2])))
+        trf = _BRepBuilderAPI.BRepBuilderAPI_Transform(m)
+        trf.Perform(self.shape, True)
+        return trf.Shape()
 
 
-def rotated(s1, pabout, pdir, angle):
-    """
-    Returns a new shape which is s1 rotated.
-    """
-    s2 = s1.copy()
-    s2.rotate(pabout, pdir, angle)
-    return s2
+    def _scale(self, sx=1.0, sy=1.0, sz=1.0):
+        m = _gp.gp_GTrsf()
+        m.SetVectorialPart(_gp.gp_Mat(sx, 0, 0, 0, sy, 0, 0, 0, sz))
+        trf = _BRepBuilderAPI.BRepBuilderAPI_GTransform(self.shape, m, False)
+        return trf.Shape()
 
 
-def rotatedx(s1, angle):
-    """
-    Returns a new shape which is s1 rotated about (0.0, 0.0, 0.0) and
-    around (1.0, 0.0, 0.0)
-    """
-    s2 = s1.copy()
-    s2.rotatex(angle)
-    return s2
+    def translated(self, pdir):
+        """
+        Returns a new shape which is s1 translated (moved).
+        """
+        s2 = self.copy()
+        s2.translate(pdir)
+        return s2
 
 
-def rotatedy(s1, angle):
-    """
-    Returns a new shape which is s1 rotated about (0.0, 0.0, 0.0) and
-    around (0.0, 1.0, 0.0)
-    """
-    s2 = s1.copy()
-    s2.rotatey(angle)
-    return s2
+    def rotated(self, pabout, pdir, angle):
+        """
+        Returns a new shape which is s1 rotated.
+        """
+        s2 = self.copy()
+        s2.rotate(pabout, pdir, angle)
+        return s2
 
 
-def rotatedz(s1, angle):
-    """
-    Returns a new shape which is s1 rotated about (0.0, 0.0, 0.0) and
-    around (0.0, 0.0, 1.0)
-    """
-    s2 = s1.copy()
-    s2.rotatez(angle)
-    return s2
+    def rotatedx(self, angle):
+        """
+        Returns a new shape which is s1 rotated about (0.0, 0.0, 0.0) and
+        around (1.0, 0.0, 0.0)
+        """
+        s2 = self.copy()
+        s2.rotatex(angle)
+        return s2
 
 
-def mirrored(s1, pabout, pdir):
-    """
-    Returns a new shape which is s1 mirrored.
-    """
-    s2 = s1.copy()
-    s2.mirror(pabout, pdir)
-    return s2
+    def rotatedy(self, angle):
+        """
+        Returns a new shape which is s1 rotated about (0.0, 0.0, 0.0) and
+        around (0.0, 1.0, 0.0)
+        """
+        s2 = self.copy()
+        s2.rotatey(angle)
+        return s2
 
 
-def mirroredx(s1):
-    """
-    Returns a new shape which is s1 mirrored about (0.0, 0.0, 0.0) in
-    the x-direction
-    """
-    s2 = s1.copy()
-    s2.mirrorx()
-    return s2
+    def rotatedz(self, angle):
+        """
+        Returns a new shape which is s1 rotated about (0.0, 0.0, 0.0) and
+        around (0.0, 0.0, 1.0)
+        """
+        s2 = self.copy()
+        s2.rotatez(angle)
+        return s2
 
 
-def mirroredy(s1):
-    """
-    Returns a new shape which is s1 mirrored about (0.0, 0.0, 0.0) in
-    the y-direction
-    """
-    s2 = s1.copy()
-    s2.mirrory()
-    return s2
+    def mirrored(self, pabout, pdir):
+        """
+        Returns a new shape which is s1 mirrored.
+        """
+        s2 = self.copy()
+        s2.mirror(pabout, pdir)
+        return s2
 
 
-def mirroredz(s1):
-    """
-    Returns a new shape which is s1 mirrored about (0.0, 0.0, 0.0) in
-    the z-direction
-    """
-    s2 = s1.copy()
-    s2.mirrorz()
-    return s2
+    def mirroredx(self):
+        """
+        Returns a new shape which is s1 mirrored about (0.0, 0.0, 0.0) in
+        the x-direction
+        """
+        s2 = self.copy()
+        s2.mirrorx()
+        return s2
 
 
-def scaled(s1, sfx, sfy=None, sfz=None):
-    """
-    Returns a new shape which is s1 scaled by a different scale factor
-    in all 3 dimensions.  If sfy and sfz are left undefined, all 3
-    dimensions are scaled by sfx.
-    """
-    s2 = s1.copy()
-    s2.scale(sfx, sfy, sfz)
-    return s2
+    def mirroredy(self):
+        """
+        Returns a new shape which is s1 mirrored about (0.0, 0.0, 0.0) in
+        the y-direction
+        """
+        s2 = self.copy()
+        s2.mirrory()
+        return s2
 
 
-def scaledx(s1, sfx):
-    """
-    Returns a new shape which is s1 scaled by sfx in the x-dimension
-    """
-    s2 = s1.copy()
-    s2.scalex(sfx)
-    return s2
+    def mirroredz(self):
+        """
+        Returns a new shape which is s1 mirrored about (0.0, 0.0, 0.0) in
+        the z-direction
+        """
+        s2 = self.copy()
+        s2.mirrorz()
+        return s2
 
 
-def scaledy(s1, sfy):
-    """
-    Returns a new shape which is s1 scaled by sfy in the y-dimension
-    """
-    s2 = s1.copy()
-    s2.scaley(sfy)
-    return s2
+    def scaled(self, sfx, sfy=None, sfz=None):
+        """
+        Returns a new shape which is s1 scaled by a different scale factor
+        in all 3 dimensions.  If sfy and sfz are left undefined, all 3
+        dimensions are scaled by sfx.
+        """
+        s2 = self.copy()
+        s2.scale(sfx, sfy, sfz)
+        return s2
 
 
-def scaledz(s1, sfz):
-    """
-    Returns a new shape which is s1 scaled by sfz in the z-dimension
-    """
-    s2 = s1.copy()
-    s2.scalez(sfz)
-    return s2
+    def scaledx(self, sfx):
+        """
+        Returns a new shape which is s1 scaled by sfx in the x-dimension
+        """
+        s2 = self.copy()
+        s2.scalex(sfx)
+        return s2
 
 
-def reversed(s1):
-    """
-    Returns a new shape which is s1 reversed in orientation.
-    """
-    s2 = s1.copy()
-    s2.reverse()
-    return s2
+    def scaledy(self, sfy):
+        """
+        Returns a new shape which is s1 scaled by sfy in the y-dimension
+        """
+        s2 = self.copy()
+        s2.scaley(sfy)
+        return s2
+
+
+    def scaledz(self, sfz):
+        """
+        Returns a new shape which is s1 scaled by sfz in the z-dimension
+        """
+        s2 = self.copy()
+        s2.scalez(sfz)
+        return s2
+
+
+    def reversed(self):
+        """
+        Returns a new shape which is s1 reversed in orientation.
+        """
+        s2 = self.copy()
+        s2.reverse()
+        return s2
 
 
 # Face Functions
@@ -2809,7 +2812,7 @@ def revol(s, pabout, pdir, angle):
     else:
         print('Error: Improper type for prism', s.stype)
 
-def to_graph():
+#def to_graph():
 
 def loft(ws, ruled=False, stype='solid'):
     """
