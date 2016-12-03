@@ -108,6 +108,16 @@ def _translate(s1, pdir):
 
 
 def _rotate(s1, pabout, pdir, angle):
+    """ 
+    Parameters
+    ----------
+
+    s1 : ccad.model.solid 
+    pabout : point 
+    pdir :   direction 
+    angle : angle 
+
+    """
     m = _gp.gp_Trsf()
     m.SetRotation(_gp.gp_Ax1(_gp.gp_Pnt(pabout[0], pabout[1], pabout[2]),
                              _gp.gp_Dir(pdir[0], pdir[1], pdir[2])), angle)
@@ -117,6 +127,15 @@ def _rotate(s1, pabout, pdir, angle):
 
 
 def _mirror(s1, pabout, pdir):
+    """
+    Parameters
+    ----------
+
+    s1 : ccad.model.solid
+    pabout : point 
+    pdir : direction 
+
+    """
     m = _gp.gp_Trsf()
     m.SetMirror(_gp.gp_Ax2(_gp.gp_Pnt(pabout[0], pabout[1], pabout[2]),
                            _gp.gp_Dir(pdir[0], pdir[1], pdir[2])))
