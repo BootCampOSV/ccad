@@ -92,6 +92,14 @@ from OCC import TopTools as _TopTools
 
 # Shape Functions
 def _translate(s1, pdir):
+    """ 
+    Parameters
+    -----------
+
+    s1 : ccad.model.solid
+    pdir : 
+
+    """
     m = _gp.gp_Trsf()
     m.SetTranslation(_gp.gp_Vec(pdir[0], pdir[1], pdir[2]))
     trf = _BRepBuilderAPI.BRepBuilderAPI_Transform(m)
