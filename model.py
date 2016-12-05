@@ -24,6 +24,8 @@ import math as _math
 import numpy as np
 import pandas as pd 
 import networkx as nx
+import vispy as vp
+import pdb
 
 
 #from OCC.ChFi3d import *
@@ -95,7 +97,6 @@ from OCC import TopTools as _TopTools
 
 
 # Shape Functions
-def class(object)
 
 def _translate(s1, pdir):
     """ 
@@ -1821,6 +1822,7 @@ class face(shape):
         g1 = _GProp_GProps()
         _brepgprop_SurfaceProperties(self.shape, g1)
         p = g1.CentreOfMass()
+        pdb.set_trace()
         return (p.X(), p.Y(), p.Z())
 
     def area(self):
@@ -1904,14 +1906,56 @@ class shell(shape):
         return total_area
 
 
+class entity(object):
+    """  An entity is a solid and attachment entities
+
+        a link entitie is a tuple (contact point, direction)
+        a link entities define either an affine line or an affine plane
+        affine lines and affine planes are used for establishing links
+        between solids. 
+
+        Links are either. 
+            + Contact intersection of two affine lines
+            + Symmetry wrt to an affine plane
+    """
+    def __init__(self,s1):
+
+        self.solid = s1
+        self.G = nx.DiGraph()
+        self.G.pos={}
+        
+        lshell = self.solid.subshapes('shell')
+            
+        for k,sh in enumerate(lshell):
+            
+            self.G.pos[k] = sh.center()
+            lentities = np.array([[]])
+            lentities.shape=(3,0)
+            lface = sh.subshapes('face')
+
+            for fa in lface:
+                face_type = fa.type()
+                lwire = fa.subshapes('wire')
+                for wi in lwire:
+                    pt_contact = np.array(wi.center())[:,None]
+                    lentities = np.append(lentities,pt_contact,axis=1)
+                if face_type == 'plane':
+                    pass
+                if face_type == 'cylinder': 
+                    pass       
+            self.G.add_node(k,entities=lentities,shape=sh)
+
 class solid(shape):
     """
     A closed and filled shell.  Can be instantiated with a list of
     shells to connect.
 
-    Currently OCC compund and compsolid are also handled by solid.
-    That isn't right.  Ultimately, should make them their own classes
+    Currently OCC compound and compsolid are also handled by solid.
+    That isn't right. 
+
+    Ultimately, should make them their own classes
     and type check more carefully ***.
+
     """
 
     stype = 'solid'
@@ -1944,6 +1988,10 @@ class solid(shape):
 
     def __and__(self, other):
         return common(self, other)
+
+    
+
+
 
     def to_stl(self, name, **options):
         """
@@ -1985,6 +2033,51 @@ class solid(shape):
         _brepgprop_VolumeProperties(self.shape, g1)
         p = g1.CentreOfMass()
         return (p.X(), p.Y(), p.Z())
+
+    def view_graph(self):
+        fig = vp.Fig()
+        ax  = fig[0,0]
+        N  = len(self.G.node.keys())
+        Xn = [self.G.pos[k][0] for k in range(N)]# x-coordinates of nodes
+        Yn = [self.G.pos[k][1] for k in range(N)]# y-coordinates
+        Zn = [self.G.pos[k][2] for k in range(N)]# z-coordinates
+        Xe = []
+        Ye = []
+        Ze = []
+        for e in self.G.edges():
+            Xe+=[self.G.pos[e[0]][0],self.G.pos[e[1]][0], None]# x-coordinates of edge ends
+            Ye+=[self.G.pos[e[0]][1],self.G.pos[e[1]][1], None]
+            Ze+=[self.G.pos[e[0]][2],self.G.pos[e[1]][2], None]
+        
+        
+
+        
+    def analyze(self):
+        """ solid analysis
+
+        http://videolectures.net/etvc08_guibas_dosarp/
+
+        Estimate of Frequencies of Geometric Regularities
+        for Use in Reverse Engineering of
+        Simple Mechanical Components
+
+
+        http://ralph.cs.cf.ac.uk/papers/Geometry/survey.pdf
+        http://ralph.cs.cf.ac.uk/papers/Geometry/appsym.pdf
+        
+        1 : decompose the solid into sub-shells
+        2 : each shell becomes a node of the graph 
+        3 : The center of mass of the shell becomes the node position 
+
+        """
+        lshell = self.subshapes('shell')
+        self.G = nx.DiGraph()
+        self.G.pos={}
+        for k,s in enumerate(lshell):
+            self.G.add_node(k)
+            self.G.pos[k] = s.center()
+
+
 
     def fillet(self, rad, edge_indices=None):
         """
@@ -2809,7 +2902,7 @@ def revol(s, pabout, pdir, angle):
     else:
         print('Error: Improper type for prism', s.stype)
 
-def to_graph():
+#def to_graph():
 
 def loft(ws, ruled=False, stype='solid'):
     """

@@ -70,7 +70,7 @@ from OCC.HLRBRep import (HLRBRep_Algo as _HLRBRep_Algo,
 from OCC.TCollection import (TCollection_ExtendedString as
                              _TCollection_ExtendedString)
 from OCC.TopExp import TopExp_Explorer as _TopExp_Explorer
-from OCC.Visual3d import Visual3d_ViewOrientation as _Visual3d_ViewOrientation
+#from OCC.Visual3d import Visual3d_ViewOrientation as _Visual3d_ViewOrientation
 from OCC.Visualization import Display3d as _Display3d
 
 import ccad.model as _cm
