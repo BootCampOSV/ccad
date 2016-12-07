@@ -1817,7 +1817,6 @@ class face(shape):
         g1 = _GProp_GProps()
         _brepgprop_SurfaceProperties(self.shape, g1)
         p = g1.CentreOfMass()
-        pdb.set_trace()
         return (p.X(), p.Y(), p.Z())
 
     def area(self):

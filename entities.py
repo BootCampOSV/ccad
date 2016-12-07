@@ -1,6 +1,8 @@
 from __future__ import print_function
 
 from os import path as _path
+import ccad.model as cm
+import ccad.display as cd 
 import sys as _sys
 import re as _re  # Needed for svg
 import math as _math
@@ -26,6 +28,10 @@ class entity(object):
             + Symmetry wrt to an affine plane
     """
     def __init__(self,s1):
+        """ 
+        s1 : ccad solid 
+
+        """
 
         self.solid = s1
         self.G = nx.DiGraph()
@@ -52,29 +58,29 @@ class entity(object):
                     pass       
             self.G.add_node(k,entities=lentities,shape=sh)
 
-    def analyze(self):
-        """ solid analysis
-
-        http://videolectures.net/etvc08_guibas_dosarp/
-
-        Estimate of Frequencies of Geometric Regularities
-        for Use in Reverse Engineering of
-        Simple Mechanical Components
-
-
-        http://ralph.cs.cf.ac.uk/papers/Geometry/survey.pdf
-        http://ralph.cs.cf.ac.uk/papers/Geometry/appsym.pdf
-        
-        1 : decompose the solid into sub-shells
-        2 : each shell becomes a node of the graph 
-        3 : The center of mass of the shell becomes the node position 
-
-        """
-        lshell = self.subshapes('shell')
-        self.G = nx.DiGraph()
-        self.G.pos={}
-        for k,s in enumerate(lshell):
-            self.G.add_node(k)
-            self.G.pos[k] = s.center()
-
-
+#    def analyze(self):
+#        """ solid analysis
+#
+#        http://videolectures.net/etvc08_guibas_dosarp/
+#
+#        Estimate of Frequencies of Geometric Regularities
+#        for Use in Reverse Engineering of
+#        Simple Mechanical Components
+#
+#
+#        http://ralph.cs.cf.ac.uk/papers/Geometry/survey.pdf
+#        http://ralph.cs.cf.ac.uk/papers/Geometry/appsym.pdf
+#        
+#        1 : decompose the solid into sub-shells
+#        2 : each shell becomes a node of the graph 
+#        3 : The center of mass of the shell becomes the node position 
+#
+#        """
+#        lshell = self.subshapes('shell')
+#        self.G = nx.DiGraph()
+#        self.G.pos={}
+#        for k,s in enumerate(lshell):
+#            self.G.add_node(k)
+#            self.G.pos[k] = s.center()
+#
+#
