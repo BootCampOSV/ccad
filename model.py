@@ -1494,7 +1494,7 @@ class shape(object):
                 print('.' * _level + '%s%d location: (%.6f,%.6f,%.6f)%s' % \
                     (t, count, x, y, z, suffix))
                 if not flat:
-                    s.dump(False, level + 1)
+                    s.dump(False, _level + 1)
 
     def nearest(self, stype, positions, eps=1e-12):
         """
@@ -1826,6 +1826,7 @@ class face(shape):
         return (p.X(), p.Y(), p.Z())
 
     def area(self):
+        de[9]['shape']
         """
         Returns the area of the face
         """
@@ -1906,44 +1907,44 @@ class shell(shape):
         return total_area
 
 
-class entity(object):
-    """  An entity is a solid and attachment entities
-
-        a link entitie is a tuple (contact point, direction)
-        a link entities define either an affine line or an affine plane
-        affine lines and affine planes are used for establishing links
-        between solids. 
-
-        Links are either. 
-            + Contact intersection of two affine lines
-            + Symmetry wrt to an affine plane
-    """
-    def __init__(self,s1):
-
-        self.solid = s1
-        self.G = nx.DiGraph()
-        self.G.pos={}
-        
-        lshell = self.solid.subshapes('shell')
-            
-        for k,sh in enumerate(lshell):
-            
-            self.G.pos[k] = sh.center()
-            lentities = np.array([[]])
-            lentities.shape=(3,0)
-            lface = sh.subshapes('face')
-
-            for fa in lface:
-                face_type = fa.type()
-                lwire = fa.subshapes('wire')
-                for wi in lwire:
-                    pt_contact = np.array(wi.center())[:,None]
-                    lentities = np.append(lentities,pt_contact,axis=1)
-                if face_type == 'plane':
-                    pass
-                if face_type == 'cylinder': 
-                    pass       
-            self.G.add_node(k,entities=lentities,shape=sh)
+#class entity(object):
+#    """  An entity is a solid and attachment entities
+#
+#        a link entitie is a tuple (contact point, direction)
+#        a link entities define either an affine line or an affine plane
+#        affine lines and affine planes are used for establishing links
+#        between solids. 
+#
+#        Links are either. 
+#            + Contact intersection of two affine lines
+#            + Symmetry wrt to an affine plane
+#    """
+#    def __init__(self,s1):
+#
+#        self.solid = s1
+#        self.G = nx.DiGraph()
+#        self.G.pos={}
+#        
+#        lshell = self.solid.subshapes('shell')
+#            
+#        for k,sh in enumerate(lshell):
+#            
+#            self.G.pos[k] = sh.center()
+#            lentities = np.array([[]])
+#            lentities.shape=(3,0)
+#            lface = sh.subshapes('face')
+#
+#            for fa in lface:
+#                face_type = fa.type()
+#                lwire = fa.subshapes('wire')
+#                for wi in lwire:
+#                    pt_contact = np.array(wi.center())[:,None]
+#                    lentities = np.append(lentities,pt_contact,axis=1)
+#                if face_type == 'plane':
+#                    pass
+#                if face_type == 'cylinder': 
+#                    pass       
+#            self.G.add_node(k,entities=lentities,shape=sh)
 
 class solid(shape):
     """
@@ -1979,6 +1980,20 @@ class solid(shape):
                 raise TypeError
         else:
             raise TypeError
+    
+    def __repr__(self):
+        lshell = self.subshapes('shell')
+        lfaces = self.subshapes('face')
+        lwires = self.subshapes('wire')
+        ledges = self.subshapes('edge')
+        lvertex = self.subshapes('vertex')
+        st = ''
+        st = st+'Nshell : '+str(len(lshell))+'\n'
+        st = st+'Nfaces : '+str(len(lfaces))+'\n'
+        st = st+'Nwires : '+str(len(lwires))+'\n'
+        st = st+'Nedges : '+str(len(ledges))+'\n'
+        st = st+'Nvertex : '+str(len(lvertex))+'\n'
+        return(st)
 
     def __add__(self, other):
         return fuse(self, other)

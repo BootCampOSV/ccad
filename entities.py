@@ -38,26 +38,38 @@ class entity(object):
         self.G.pos={}
         
         lshell = self.solid.subshapes('shell')
-            
+        # solid 
+        #   shell
+        #     face
+        #       wire
+        #         center of wire 
         for k,sh in enumerate(lshell):
             
             self.G.pos[k] = sh.center()
-            lentities = np.array([[]])
-            lentities.shape=(3,0)
+            pcloud = np.array([[]])
+            pcloud.shape=(3,0)
             lface = sh.subshapes('face')
 
             for fa in lface:
                 face_type = fa.type()
                 lwire = fa.subshapes('wire')
                 for wi in lwire:
-                    pt_contact = np.array(wi.center())[:,None]
-                    lentities = np.append(lentities,pt_contact,axis=1)
+                    lvertex = wi.subshapes('vertex')
+                    #pt_contact = np.array(wi.center())[:,None]
+                    for vr in lvertex: 
+                        point = np.array(vr.center())[:,None]
+                        pcloud = np.append(pcloud,point,axis=1)
                 if face_type == 'plane':
                     pass
                 if face_type == 'cylinder': 
                     pass       
-            self.G.add_node(k,entities=lentities,shape=sh)
+            self.G.add_node(k,pcloud=pcloud,shape=sh)
 
+    def __repr__(self):
+        st = self.solid.__repr__()+'\n'
+        st = st + self.G.__repr__()+'\n'
+        return(st)
+        
 #    def analyze(self):
 #        """ solid analysis
 #
